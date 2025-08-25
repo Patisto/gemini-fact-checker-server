@@ -1,0 +1,56 @@
+📄 Fact-Checker Server
+This document explains the basic functionality and structure of the Node.js server that uses the Gemini AI model to perform fact-checking.
+
+How it Works
+The server is built using Node.js and the Express.js framework. Its main purpose is to act as an intermediary between a client-side application (like a web page) and the Google Gemini API. It receives a request from the client and sends it to the AI model for analysis.
+
+Here is a step-by-step breakdown of the process:
+
+1. Server Setup
+The express library is used to create and run the server.
+
+The server is configured to listen for incoming requests on a specific port, typically 3000.
+
+It serves static files from a public directory, which would contain your index.html and other front-end assets.
+
+2. Request Handling
+The server listens for HTTP POST requests to the /api/check-fact endpoint.
+
+When a request is received, it checks the request body for either a url or a title.
+
+If neither is provided, it sends an error message back to the client.
+
+3. AI Interaction
+The server uses the Official Gemini SDK to communicate with the Gemini AI model.
+
+It constructs a dynamic prompt that includes the "system" instruction for the AI. For instance, the prompt begins with a clear directive like "You are a professional fact-checker." This is how you define the AI's role and behavior.
+
+The entire prompt, including this system instruction, is sent in the contents part of the request. The API call includes the following:
+
+model: Specifies the AI model to use, such as "gemini-2.5-flash-preview-05-20".
+
+contents: This is the main payload of the request. It's an array of message parts.
+
+role: "user": This identifies the sender of the message.
+
+parts: This contains the actual prompt text, which is the core instruction for the AI.
+
+generationConfig: This object controls how the AI generates its response. It tells the model to provide a response in a specific JSON format with a status (either "True", "False", or "Suspicious") and a detailed explanation.
+
+4. Response and Conclusion
+The AI processes the request and sends back a structured JSON response.
+
+The server receives this response and sends it directly back to the client.
+
+A try...catch block is used to handle potential errors, such as a missing API key or a network issue. If an error occurs, the server sends a generic "Failed to analyze" message to the client.
+
+System Overview
+This server is one part of a larger system. To function completely, the system relies on three interconnected components:
+
+The Client (Front-end): This is the user-facing part, most likely an HTML page with JavaScript. It collects the user's input (a URL or a title) and sends it as a request to the server.
+
+The Server (Back-end): This is the Node.js application described above. It's the central hub that receives requests from the client, handles business logic, and communicates with the AI model.
+
+The AI Model (Gemini API): This is an external service provided by Google. The server sends it a prompt, and the AI's role is to process the request and provide a structured, fact-checked response.
+
+Together, these three components form a complete system that allows a user to submit information for fact-checking and receive a response from the AI.
