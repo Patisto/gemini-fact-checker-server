@@ -18,6 +18,7 @@ const genAI = new GoogleGenerativeAI(process.env.GEMINI_API_KEY);
 // Configure CORS to allow your frontend domain
 const corsOptions = {
   origin: [
+    'https://truth-lensnetlifyapp.netlify.app',
     'https://truthlensnetlify.netlify.app',
     'http://localhost:3000',
     'http://localhost:3001',
