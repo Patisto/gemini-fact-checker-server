@@ -3,6 +3,7 @@ const express = require('express');
 const { GoogleGenerativeAI } = require('@google/generative-ai');
 const dotenv = require('dotenv');
 const path = require('path');
+const cors = require('cors');
 
 // Load environment variables from .env file
 dotenv.config();
@@ -13,6 +14,20 @@ const port = process.env.PORT || 3000;
 // Initialize the Gemini SDK client with your API key
 console.log('API Key loaded:', process.env.GEMINI_API_KEY ? 'Yes' : 'No');
 const genAI = new GoogleGenerativeAI(process.env.GEMINI_API_KEY);
+
+// Configure CORS to allow your frontend domain
+const corsOptions = {
+  origin: [
+    'https://truthlensnetlify.netlify.app',
+    'http://localhost:3000',
+    'http://localhost:3001',
+    'http://127.0.0.1:3000'
+  ],
+  credentials: true,
+  optionsSuccessStatus: 200
+};
+
+app.use(cors(corsOptions));
 
 // Use express.json() middleware to parse JSON request bodies
 app.use(express.json());
