@@ -38,33 +38,25 @@ app.use(express.static(path.join(__dirname, 'public')));
 
 // API endpoint to handle the fact-checking request
 app.post('/api/check-fact', async (req, res) => {
-  // Destructure both url and title from the request body
-  const { url, title } = req.body;
+  // Only accept URL from the request body
+  const { url } = req.body;
 
-  // Check if at least one of the fields is provided
-  if (!url && !title) {
-    return res.status(400).json({ error: 'Either a URL or a title is required.' });
+  // Check if URL is provided
+  if (!url) {
+    return res.status(400).json({ error: 'A URL is required.' });
   }
 
   try {
-    console.log('Processing request with:', { url: !!url, title: !!title });
+    console.log('Processing request with URL:', url);
     
     const model = genAI.getGenerativeModel({
       model: "gemini-1.5-flash"
     });
 
-    // The prompt is the core of the AI's instruction.
-    // The content of the prompt will change based on the input type.
-    let prompt;
-    if (url) {
-      prompt = `You are a professional fact-checker. Your task is to analyze the content of the provided URL and determine its factual accuracy. Browse the content of the URL and classify the overall factual status as 'True', 'False', or 'Suspicious'. Provide a detailed, concise, and neutral explanation for your conclusion, citing evidence from the web.
+    // The prompt for URL fact-checking
+    const prompt = `You are a professional fact-checker. Your task is to analyze the content of the provided URL and determine its factual accuracy. Browse the content of the URL and classify the overall factual status as 'True', 'False', or 'Suspicious'. Provide a detailed, concise, and neutral explanation for your conclusion, citing evidence from the web.
 
 URL: ${url}`;
-    } else {
-      prompt = `You are a professional fact-checker. Your task is to analyze the provided title and determine its factual accuracy. Use your browsing and knowledge capabilities to find reliable information and classify the overall factual status as 'True', 'False', or 'Suspicious'. Provide a detailed, concise, and neutral explanation for your conclusion, citing evidence from the web.
-
-Title: ${title}`;
-    }
 
     const result = await model.generateContent({
       contents: [{
